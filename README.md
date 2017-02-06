@@ -10,6 +10,9 @@
 		esi-mail.send_mail`
 - Clone repository.
 - Replace `CLIENT_ID` and `REDIRECT_URI` at the top of `config.js` (matching your application).
+- Replace `BASE_URL` as well.
+	- If your mail application is at the route directory of your domain, leave it blank.
+	- If your application is at another location, describe the path. For example, if your application is at `yourdomain.com/mail`, set this to `/mail`.
 - Host files somewhere, and enjoy.
 
 #### Instructions

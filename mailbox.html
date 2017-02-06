@@ -1,0 +1,247 @@
+<h1>Mailbox</h1>
+<!-- Authentication error message. -->
+<p ng-if="!hasAuthentication();">
+	You must
+	<a href="#!/authentication">
+		authenticate a character
+	</a>
+	to view your mailbox.
+</p>
+<!-- Main content. -->
+<div ng-if="hasAuthentication();">
+	<!-- Loading spinner. -->
+	<div class="text-center p-4" ng-if="loadingMain > 0">
+		<span class="fa fa-spinner fa-spin fa-5x"></span>
+	</div>
+	<!-- Main mail list. -->
+	<section class="mail-list" ng-if="loadingMain == 0">
+		<!-- New mail button. -->
+		<button class="btn btn-primary new-mail"
+			ng-click="newMail();">
+			<span class="fa fa-envelope" aria-hidden="true"></span>
+			New Mail
+		</button>
+		<!-- Repeat over all mails. -->
+		<article ng-repeat="mail in mails | orderObjectBy:['-timestamp']"
+			class="mail-list-item"
+			ng-class="{
+				'read': mail.is_read,
+				'not-read': !mail.is_read,
+			}">
+			<!-- Arrow to desinate open/closed messages. -->
+			<span class="fa"
+				ng-class="{
+					'fa-caret-down': open == mail.mail_id,
+					'fa-caret-right': open != mail.mail_id,
+				}">
+			</span>
+			<!-- Timestamp and title of the message. -->
+			<span class="title"
+				ng-click="clickMail(mail.mail_id);">
+				[{{mail.timestamp}}] {{mail.subject}}
+			</span>
+			<!-- Hover controls on the right side. -->
+			<span class="controls float-right">
+				<!-- Toggle read/unread. -->
+				<tooltip class="fa fa-eye"
+					data-toggle="tooltip"
+					data-placement="top"
+					data-animation="false"
+					title="Toggle Read/Unread"
+					ng-click="toggleRead(mail.mail_id);">
+				</tooltip>
+				<!-- Delete the mail. -->
+				<tooltip class="fa fa-trash"
+					data-toggle="tooltip"
+					data-placement="top"
+					data-animation="false"
+					title="Delete"
+					ng-click="deleteMail(mail.mail_id);">
+				</tooltip>
+			</span>
+			<!-- Actual mail message output. -->
+			<section class="mail-content"
+				ng-if="open == mail.mail_id">
+				<!-- Spinner for individual messages loading. -->
+				<div class="text-center p-4" ng-if="loadingMail[mail.mail_id] > 0">
+					<span class="fa fa-spinner fa-spin fa-4x"></span>
+				</div>
+				<!-- The message section itself. -->
+				<div class="media" ng-if="loadingMail[mail.mail_id] == 0">
+					<!-- Character portrait of who sent the mail. -->
+					<img class="d-flex mr-3"
+						ng-src="http://imageserver.eveonline.com/Character/{{mail.full.from}}_128.jpg"
+						alt="Character Portrait">
+					<!-- Content. -->
+					<div class="media-body">
+						<!-- Additional controls at the top of the mail. -->
+						<div class="main-controls">
+							<!-- Toggle read/unread. -->
+							<tooltip class="fa fa-eye"
+								data-toggle="tooltip"
+								data-placement="top"
+								data-animation="false"
+								title="Toggle Read/Unread"
+								ng-click="toggleRead(mail.mail_id);">
+							</tooltip>
+							<!-- Reply to the sender. -->
+							<tooltip class="fa fa-reply"
+								data-toggle="tooltip"
+								data-placement="top"
+								data-animation="false"
+								title="Reply"
+								ng-click="newMail(
+									mail,
+									'one'
+								);">
+							</tooltip>
+							<!-- Reply to sender and recipients. -->
+							<tooltip class="fa fa-reply-all"
+								data-toggle="tooltip"
+								data-placement="top"
+								data-animation="false"
+								title="Reply All"
+								ng-click="newMail(
+									mail,
+									'all'
+								);">
+							</tooltip>
+							<!-- Delete the mail. -->
+							<tooltip class="fa fa-trash"
+								data-toggle="tooltip"
+								data-placement="top"
+								data-animation="false"
+								title="Delete"
+								ng-click="deleteMail(mail.mail_id);">
+							</tooltip>
+						</div>
+						<!-- Output the mail subject. -->
+						<h4>{{mail.subject}}</h4>
+						<!-- Output who it's from and who they send it to. -->
+						<h5>
+							From:
+							{{
+								parseLookup([{
+									"recipient_id": mail.full.from,
+									"recipient_type": "character"
+								}], true)
+							}}
+							<small>
+								To:
+								{{parseLookup(mail.full.recipients, true)}}
+							</small>
+						</h5>
+						<!-- Output the mail itself. -->
+						<span class="mail-body" ng-bind-html="mail.full.body | mailHtmlFix:marketItems | trust"></span>
+					</div>
+				</div>
+			</section>
+		</article>
+		<!-- Load more button. -->
+		<button class="btn btn-block btn-link"
+			ng-click="loadMore();">
+			Load More
+		</button>
+	</section>
+</div>
+<!-- New mail modal. -->
+<div class="modal fade" id="newMailModal" tabindex="-1" role="dialog" aria-labelledby="newMailModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="newMailModalLabel">Send Mail</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group row">
+						<label for="send_subject"
+							class="col-form-label col-sm-2">
+							Subject:
+						</label>
+						<div class="col-sm-10"
+							ng-class="{'has-danger': send.subject == ''}">
+							<input type="text"
+								class="form-control"
+								id="send_subject"
+								placeholder="Subject"
+								ng-model="send.subject">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="send_to"
+							class="col-form-label col-sm-2">
+							To:
+						</label>
+						<div class="col-sm-10"
+							ng-class="{'has-danger': send.recipients.length == 0}">
+							<div class="input-group">
+								<input type="text"
+									class="form-control"
+									id="send_to"
+									placeholder="Character / Corporation / Alliance Name"
+									ng-model="send.to"
+									ng-disabled="loadingAdd > 0"
+									ng-enter="addRecipient(send.to);">
+								<span class="input-group-btn">
+									<button type="button"
+										class="btn btn-success"
+										ng-class="{'disabled': loadingAdd > 0}"
+										ng-click="addRecipient(send.to);"
+										ng-disabled="loadingAdd > 0">
+										<span class="fa fa-plus" aria-hidden="true"></span>
+									</button>
+								</span>
+							</div>
+							<ul class="recipient-list">
+								<li ng-repeat="user in send.recipients">
+									<button type="button"
+										class="btn btn-sm btn-outline-danger"
+										ng-click="removeRecipient(user);">
+										<span class="fa fa-close"></span>
+									</button>
+									{{$store.lookup['character'][user.recipient_id]}}
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="send_body">
+							Message:
+						</label>
+						<div style="background-color: rgba(0, 0, 0, 0.5);">
+							<ng-quill-editor
+								name="send_body"
+								id="send_body"
+								ng-model="send.body">
+							</ng-quill-editor>
+						</div>
+					</div>
+				</form>
+				<small ng-if="send.original != null"
+					class="text-muted">
+					*When replying to a mail, the original message will be appended to the mail, just like in-game. I do not display it here.
+				</small>
+			</div>
+			<div class="modal-footer">
+				<button type="button"
+					data-dismiss="modal"
+					class="btn btn-secondary"
+					ng-class="{'disabled': loadingSend > 0}"
+					ng-disabled="loadingSend > 0">
+					Cancel
+				</button>
+				<button type="button"
+					data-dismiss="modal"
+					class="btn btn-primary"
+					ng-class="{'disabled': send.subject == '' || send.recipients.length == 0 || loadingSend > 0}"
+					ng-click="sendMail();"
+					ng-disabled="send.subject == '' || send.recipients.length == 0 || loadingSend > 0">
+					Send
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

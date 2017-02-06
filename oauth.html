@@ -1,0 +1,71 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+	function getSearchObject(search) {
+		if (search === "") return {};
+
+		var o = {},
+			nvPairs = search.substr(1).replace(/\+/g, " ").split("&");
+
+		nvPairs.forEach( function (pair) {
+			var e = pair.indexOf('=');
+			var n = decodeURIComponent(e < 0 ? pair : pair.substr(0,e)),
+				v = (e < 0 || e + 1 == pair.length) 
+					? null : 
+					decodeURIComponent(pair.substr(e + 1,pair.length - e));
+			if (!(n in o))
+				o[n] = v;
+			else if (o[n] instanceof Array)
+				o[n].push(v);
+			else
+				o[n] = [o[n] , v];
+		});
+		return o;
+	}
+
+	var hash = window.location.hash.substring(1);
+	var parser = document.createElement('a');
+	parser.href = "oauth.html/?" + hash;
+	data = getSearchObject(parser.search);
+
+	if(sessionStorage.getItem("ngStorage-state") == "\"" + data.state + "\"") {
+		// $.ajax({
+		// 	"method": "GET",
+		// 	"url": "https://login.eveonline.com/oauth/verify",
+		// 	"headers": {
+		// 		"Authorization": "Bearer " + data.access_token,
+		// 		"Host": "login.eveonline.com",
+		// 		"User-Agent": "Phoenix Naval Systems Email Client",
+		// 	},
+		// 	"error": function() {
+		// 		document.write("Could not complete authentication.");
+		// 	},
+		// 	"success": function(data) {
+		// 		console.log(data);
+		// 	},
+		// });
+
+		sessionStorage.setItem(
+			"ngStorage-access_token",
+			"\"" + data.access_token + "\""
+		);
+
+		sessionStorage.setItem(
+			"ngStorage-expires_on",
+			"\"" + (Date.now() + (data.expires_in * 1000)) + "\""
+		);
+
+		sessionStorage.setItem(
+			"ngStorage-hash",
+			"\"" + hash + "\""
+		);
+
+		sessionStorage.setItem(
+			"ngStorage-token_type",
+			"\"" + data.token_type + "\""
+		);
+
+		window.location = "/#!/authentication";
+	} else {
+		document.write("Could not complete authentication.");
+	}
+</script>

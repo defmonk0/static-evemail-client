@@ -1,0 +1,136 @@
+body {
+    color: rgba(255, 255, 255, .8);
+    background-image: url("https://i.imgur.com/bRpIM.jpg");
+}
+
+div.content {
+    padding: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    border-radius: .5rem;
+}
+
+.bg-inverse {
+    background-color: rgba(41, 43, 44, .9) !important;
+}
+
+*[ng-click] {
+    cursor: pointer;
+}
+
+section.mail-list {
+    padding: 0;
+
+    list-style: none;
+}
+
+section.mail-list button.new-mail {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    opacity: .2;
+}
+
+section.mail-list button.new-mail:hover {
+    opacity: 1;
+}
+
+section.mail-list article.mail-list-item {
+    padding: .2rem;
+}
+
+section.mail-list article.mail-list-item:hover {
+    border-bottom: 1px dashed rgba(255, 255, 255, .5);
+}
+
+section.mail-list article.mail-list-item.read {
+    color: rgba(255, 255, 255, .6);
+}
+
+section.mail-list article.mail-list-item.not-read {
+    font-weight: bold;
+}
+
+section.mail-list article.mail-list-item .fa {
+    padding: .2rem;
+}
+
+section.mail-list article.mail-list-item .controls {
+    transition: opacity .25s ease-in-out;
+
+    opacity: 0;
+}
+
+section.mail-list article.mail-list-item:hover .controls {
+    opacity: 1;
+}
+
+section.mail-list article.mail-list-item section.mail-content {
+    padding: 1rem;
+    margin: 1rem 0;
+
+    font-weight: normal;
+
+    color: rgba(255, 255, 255, .8);
+    background-color: rgba(255, 255, 255, .1);
+}
+
+tooltip:hover {
+    opacity: .7;
+}
+
+.mail-body a:link {
+    color: rgba(220, 180, 0, 1.0);
+}
+
+.mail-body a:active,
+.mail-body a:hover,
+.mail-body a:visited {
+    text-decoration: none;
+
+    color: rgba(220, 180, 0, .6);
+}
+
+.missing-link {
+    color: rgba(220, 50, 0, 1.0);
+}
+
+.missing-link:hover {
+    color: rgba(220, 50, 0, .6);
+}
+
+#newMailModal .modal-content {
+    background-color: rgba(50, 50, 50, .8);
+}
+
+#newMailModal .modal-content > * {
+    border-color: rgba(80, 80, 80, .8);
+}
+
+#newMailModal ul.recipient-list {
+    padding: 0;
+    margin: 0;
+
+    list-style: none;
+}
+
+#newMailModal ul.recipient-list li {
+    display: inline-block;
+    padding-right: .5rem;
+
+    line-height: 2.25rem;
+}
+
+#newMailModal ul.recipient-list li > button {
+    height: 29px;
+}
+
+form > div:last-of-type {
+    margin-bottom: 0;
+}
+
+[ng-quill-editor] {
+    display: block;
+}

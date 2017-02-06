@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mail">
+	<head>
+		<!-- Metadata -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Eve Mail Client</title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-notification/0.3.5/angular-ui-notification.min.css">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.2.0/quill.bubble.min.css">
+
+		<link rel="stylesheet" href="style.css">
+
+		<!-- JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-notification/0.3.5/angular-ui-notification.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.2.0/quill.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ng-quill/2.2.3/ng-quill.min.js"></script>
+
+		<script src="swagger-js/browser/swagger-client.min.js"></script>
+
+		<script src="config.js"></script>
+		<script src="controller.js"></script>
+	</head>
+	<body ng-controller="MasterController">
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md">
+			<div class="container">
+				<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" href="#!/">
+					<span class="fa fa-envelope" aria-hidden="true"></span>
+					Eve Mail Client
+				</a>
+
+				<div class="collapse navbar-collapse" id="navbarContent">
+					<section class="navbar-nav">
+						<a class="nav-item nav-link"
+							ng-class="{'active': location.path() == '/mailbox'}"
+							href="#!/mailbox">
+							<span class="fa fa-inbox" aria-hidden="true"></span>
+							Mailbox
+							<span class="sr-only" ng-if="location.path() == '/settings'">(current)</span>
+						</a>
+						<a class="nav-item nav-link"
+							ng-class="{'active': location.path() == '/authentication'}"
+							href="#!/authentication">
+							<span class="fa fa-sign-in" aria-hidden="true"></span>
+							Authentication
+							<span class="sr-only" ng-if="location.path() == '/settings'">(current)</span>
+						</a>
+						<a class="nav-item nav-link"
+							ng-class="{'active': location.path() == '/settings'}"
+							href="#!/settings">
+							<span class="fa fa-cog" aria-hidden="true"></span>
+							Settings
+							<span class="sr-only" ng-if="location.path() == '/settings'">(current)</span>
+						</a>
+					</section>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Router -->
+		<div class="content container bg-inverse">
+			<ng-view></ng-view>
+		</div>
+	</body>
+</html>

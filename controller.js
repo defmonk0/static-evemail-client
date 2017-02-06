@@ -2,7 +2,6 @@ var mail = angular.module("mail", [
 	"ngQuill",
 	"ngRoute",
 	"ngStorage",
-	"oauth",
 	"ui-notification",
 ]);
 

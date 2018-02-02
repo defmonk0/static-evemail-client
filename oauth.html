@@ -3,94 +3,81 @@
 <script src="swagger-js/browser/swagger-client.min.js"></script>
 <script>
 	function getSearchObject(search) {
-		if (search === "") return {};
+		if (search === "") {
+			return {};
+		}
 
-		var o = {},
-			nvPairs = search.substr(1).replace(/\+/g, " ").split("&");
+		var o = {};
 
-		nvPairs.forEach( function (pair) {
-			var e = pair.indexOf('=');
-			var n = decodeURIComponent(e < 0 ? pair : pair.substr(0,e)),
-				v = (e < 0 || e + 1 == pair.length) 
-					? null : 
-					decodeURIComponent(pair.substr(e + 1,pair.length - e));
-			if (!(n in o))
+		var nvPairs = search
+			.substr(1)
+			.replace(/\+/g, " ")
+			.split("&");
+
+		nvPairs.forEach(function(pair) {
+			var e = pair.indexOf("=");
+			var n = decodeURIComponent(e < 0 ? pair : pair.substr(0, e));
+			var v =
+				e < 0 || e + 1 == pair.length
+					? null
+					: decodeURIComponent(pair.substr(e + 1, pair.length - e));
+
+			if (!(n in o)) {
 				o[n] = v;
-			else if (o[n] instanceof Array)
+			} else if (o[n] instanceof Array) {
 				o[n].push(v);
-			else
-				o[n] = [o[n] , v];
+			} else {
+				o[n] = [o[n], v];
+			}
 		});
+
 		return o;
 	}
 
 	var hash = window.location.hash.substring(1);
-	var parser = document.createElement('a');
+	var parser = document.createElement("a");
+
 	parser.href = "oauth.html/?" + hash;
 	data = getSearchObject(parser.search);
 
-	if(sessionStorage.getItem("ngStorage-state") == "\"" + data.state + "\"") {
-		// $.ajax({
-		// 	"method": "GET",
-		// 	"url": "https://login.eveonline.com/oauth/verify",
-		// 	"headers": {
-		// 		"Authorization": "Bearer " + data.access_token,
-		// 		"Host": "login.eveonline.com",
-		// 		"User-Agent": "Phoenix Naval Systems Email Client",
-		// 	},
-		// 	"error": function() {
-		// 		document.write("Could not complete authentication.");
-		// 	},
-		// 	"success": function(data) {
-		// 		console.log(data);
-		// 	},
-		// });
-
+	if (sessionStorage.getItem("ngStorage-state") == '"' + data.state + '"') {
 		sessionStorage.setItem(
 			"ngStorage-access_token",
-			"\"" + data.access_token + "\""
+			'"' + data.access_token + '"'
 		);
-
 		sessionStorage.setItem(
 			"ngStorage-expires_on",
-			"\"" + (Date.now() + (data.expires_in * 1000)) + "\""
+			'"' + (Date.now() + data.expires_in * 1000) + '"'
 		);
+		sessionStorage.setItem("ngStorage-hash", '"' + hash + '"');
+		sessionStorage.setItem("ngStorage-token_type", '"' + data.token_type + '"');
 
-		sessionStorage.setItem(
-			"ngStorage-hash",
-			"\"" + hash + "\""
-		);
-
-		sessionStorage.setItem(
-			"ngStorage-token_type",
-			"\"" + data.token_type + "\""
-		);
-		// make a swagger client for the meta data endpoint
+		// Make a swagger client for the meta data endpoint
 		new SwaggerClient({
-				"url": "https://esi.tech.ccp.is/swagger.json?datasource=tranquility",
-				"usePromise": true,
-				"authorizations": {
-					"evesso": new SwaggerClient.ApiKeyAuthorization(
-						"Authorization",
-						"Bearer " + data.access_token,
-						"header"
-					),
-				},
-			}).then(function(metaclient) {
-
-				// get characterId from verify
-				metaclient.Meta.get_verify({})
-					.then(function(data) {
+			url: "https://esi.tech.ccp.is/swagger.json?datasource=tranquility",
+			usePromise: true,
+			authorizations: {
+				evesso: new SwaggerClient.ApiKeyAuthorization(
+					"Authorization",
+					"Bearer " + data.access_token,
+					"header"
+				),
+			},
+		}).then(function(metaclient) {
+			// get characterId from verify
+			metaclient.Meta
+				.get_verify({})
+				.then(function(data) {
 					localStorage.setItem(
 						"ngStorage-characterId",
-						"\"" + data.obj.CharacterID + "\""
-						);
+						'"' + data.obj.CharacterID + '"'
+					);
 					window.location = BASE_URL + "/#!/authentication";
-					})
-					.catch(function(error) {
-						console.log(error);
-					});
-			});
+				})
+				.catch(function(error) {
+					console.log(error);
+				});
+		});
 	} else {
 		document.write("Could not complete authentication.");
 	}

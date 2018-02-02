@@ -705,7 +705,9 @@ mail.controller("MasterController", [
 	// ==================== VARIABLES
 
 		$scope.$sess = $sessionStorage;
-		$scope.$store = $localStorage;
+		$scope.$store = $localStorage.$default({
+			lookup: {}
+		});
 		$scope.location = $location;
 
 	// ==================== HELPER FUNCTIONS

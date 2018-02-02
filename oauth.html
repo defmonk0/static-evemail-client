@@ -1,5 +1,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="config.js"></script>
+<script src="swagger-js/browser/swagger-client.min.js"></script>
 <script>
 	function getSearchObject(search) {
 		if (search === "") return {};
@@ -64,8 +65,32 @@
 			"ngStorage-token_type",
 			"\"" + data.token_type + "\""
 		);
+		// make a swagger client for the meta data endpoint
+		new SwaggerClient({
+				"url": "https://esi.tech.ccp.is/swagger.json?datasource=tranquility",
+				"usePromise": true,
+				"authorizations": {
+					"evesso": new SwaggerClient.ApiKeyAuthorization(
+						"Authorization",
+						"Bearer " + data.access_token,
+						"header"
+					),
+				},
+			}).then(function(metaclient) {
 
-		window.location = BASE_URL + "/#!/authentication";
+				// get characterId from verify
+				metaclient.Meta.get_verify({})
+					.then(function(data) {
+					localStorage.setItem(
+						"ngStorage-characterId",
+						"\"" + data.obj.CharacterID + "\""
+						);
+					window.location = BASE_URL + "/#!/authentication";
+					})
+					.catch(function(error) {
+						console.log(error);
+					});
+			});
 	} else {
 		document.write("Could not complete authentication.");
 	}

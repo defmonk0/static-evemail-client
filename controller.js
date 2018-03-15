@@ -781,7 +781,7 @@ mail.controller("MailboxController", [
 			$scope.loadingMain++;
 			var client = new SwaggerClient({
 				url:
-					"https://esi.tech.ccp.is/latest/swagger.json?datasource=tranquility",
+					"https://esi.evetech.net/latest/swagger.json?datasource=tranquility",
 				usePromise: true,
 				authorizations: {
 					evesso: new SwaggerClient.ApiKeyAuthorization(
